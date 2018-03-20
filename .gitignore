@@ -1,2 +1,7 @@
 __pycache__
-PythonEnv 
+PythonDir
+build
+auxiliary.cpython-36m-x86_64-linux-gnu.so
+NN.cpython-36m-x86_64-linux-gnu.so
+NN.c
+auxiliary.c

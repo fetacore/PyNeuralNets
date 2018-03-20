@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-
-@author: rook
-"""
-
 import numpy as np
 import math
 
@@ -14,33 +8,13 @@ import math
 #Basic auxiliary functions
 def comb_arrays(x):
     #x is the list of arrays (for multivariate environment)
+    cdef size_t i
+    cdef size_t j
     z = np.zeros((len(x[0][:]),len(x)))
     for i in range(0,len(x)):
         for j in range(0,len(x[0])):
             z[j,i] = x[i][j]
     return(z)
-        
-def w_list_creator(x,hlayers=[2]):
-    weights = []
-    for i in range(0,(len(hlayers)+1)):
-        if i == 0:
-            weights.append(np.array(np.random.rand(len(x[0,:]),hlayers[0])))
-        elif i == (len(hlayers)):
-            weights.append(np.array(np.random.rand(hlayers[len(hlayers)-1],1)))
-        else:
-            weights.append(np.array(np.random.rand(hlayers[i-1],hlayers[i])))
-    return(weights)
-
-def bias_list_creator(hlayers=[2]):
-    biases = []
-    for i in range(0,(len(hlayers)+1)):
-        if i == 0:
-            biases.append(np.array(np.random.rand(1,hlayers[0])))
-        elif i == (len(hlayers)):
-            biases.append(np.array(np.random.rand(1,1)))
-        else:
-            biases.append(np.array(np.random.rand(1,hlayers[i])))
-    return(biases)
 
 def activation(x_i, arg):
     if arg == 'tanh':
@@ -71,7 +45,7 @@ def activation(x_i, arg):
     else:
         z = x_i
     return(z)
-    
+
 def gradient(x_i, arg):
     if arg == 'tanh':
         e = math.e
@@ -108,8 +82,10 @@ def gradient(x_i, arg):
     else:
         g = np.ones(x_i.shape)
     return(g)
-    
+
 def normalize(x):
+    cdef size_t i
+    cdef size_t j
     for i in range(0,len(x[0,:])):
         for j in range(0,len(x[:,0])):
             x[j,i] = (x[j,i] - np.mean(x[:,i]))/np.std(x[:,i])
@@ -119,9 +95,10 @@ def normalize(x):
 #The real deal
 def neurons(x_i,w,b,hlayers=[2],active_fnct=['tanh','linear']):
     #feeds at every node (#hlayers+output layer)
-    z = []
+    cdef list z = []
     #feeds at every node after activation (#hlayers+output layer)
-    active_z = []
+    cdef list active_z = []
+    cdef size_t i
     for i in range(0,(len(hlayers)+1)):
         if i == 0:
             z.append(np.dot(x_i,w[i])+b[i])
@@ -133,12 +110,12 @@ def neurons(x_i,w,b,hlayers=[2],active_fnct=['tanh','linear']):
             z.append(np.dot(active_z[i-1],w[i])+b[i])
             active_z.append(activation(z[i],active_fnct[len(active_fnct)-1]))
     return(list([z,active_z]))
-    
+
 def delta_rule(target,z,w,hlayers=[2],active_fnct=['tanh','linear']):
     #target is the scalar corresponding regressant
-    i = len(hlayers)
-    deltas = []
-    j = 0
+    cdef int i = len(hlayers)
+    cdef list deltas = []
+    cdef int j = 0
     while not(i<0):
         if i == len(hlayers):
             deltas.append(gradient(z[0][i],active_fnct[i])*(z[1][i]-target))
@@ -151,13 +128,14 @@ def delta_rule(target,z,w,hlayers=[2],active_fnct=['tanh','linear']):
             deltas.append(e*o)
         i = i - 1
         j = j + 1
-        
+
     return(deltas)
 
 def update(x,z,w,b,deltas,eta=0.005,hlayers=[2]):
-    new_w = []
-    new_b = []
-    j = len(hlayers)
+    cdef list new_w = []
+    cdef list new_b = []
+    cdef int j = len(hlayers)
+    cdef size_t i
     for i in range(0,len(hlayers)+1):
         if i == 0:
             gw = np.dot(deltas[j],x)
@@ -187,4 +165,3 @@ def predict(new_x,w,b,hlayers,active_fnct):
         z=neurons(x_i,w,b,hlayers,active_fnct)
         predictor[i] = z[1][:]
     return(predictor)
-
