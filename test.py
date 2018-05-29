@@ -2,7 +2,6 @@ import NN
 import auxiliary as aux
 import random
 import numpy as np
-import neuron
 
 n = 10
 Xlist = []
