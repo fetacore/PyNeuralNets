@@ -5,8 +5,7 @@ source <virtualenv Folder>/bin/activate
 pip install -r requirements.txt
 ```
 
-In order to run an example in cython you do
+In order to run the test you do
 ```
-python setup.py build_ext --inplace && python test.py
+python test.py
 ```
-This will create the .c files which we will use with emsdk to generate the WebAssembly executable.

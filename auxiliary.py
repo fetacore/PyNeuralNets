@@ -8,8 +8,6 @@ import math
 #Basic auxiliary functions
 def comb_arrays(x):
     #x is the list of arrays (for multivariate environment)
-    cdef size_t i
-    cdef size_t j
     z = np.zeros((len(x[0][:]),len(x)))
     for i in range(0,len(x)):
         for j in range(0,len(x[0])):
@@ -84,8 +82,6 @@ def gradient(x_i, arg):
     return(g)
 
 def normalize(x):
-    cdef size_t i
-    cdef size_t j
     for i in range(0,len(x[0,:])):
         for j in range(0,len(x[:,0])):
             x[j,i] = (x[j,i] - np.mean(x[:,i]))/np.std(x[:,i])
@@ -94,11 +90,8 @@ def normalize(x):
 
 #The real deal
 def neurons(x_i,w,b,hlayers=[2],active_fnct=['tanh','linear']):
-    #feeds at every node (#hlayers+output layer)
-    cdef list z = []
-    #feeds at every node after activation (#hlayers+output layer)
-    cdef list active_z = []
-    cdef size_t i
+    z = []
+    active_z = []
     for i in range(0,(len(hlayers)+1)):
         if i == 0:
             z.append(np.dot(x_i,w[i])+b[i])
@@ -112,10 +105,9 @@ def neurons(x_i,w,b,hlayers=[2],active_fnct=['tanh','linear']):
     return(list([z,active_z]))
 
 def delta_rule(target,z,w,hlayers=[2],active_fnct=['tanh','linear']):
-    #target is the scalar corresponding regressant
-    cdef int i = len(hlayers)
-    cdef list deltas = []
-    cdef int j = 0
+    deltas = []
+    i = len(hlayers)
+    j = 0
     while not(i<0):
         if i == len(hlayers):
             deltas.append(gradient(z[0][i],active_fnct[i])*(z[1][i]-target))
@@ -132,10 +124,9 @@ def delta_rule(target,z,w,hlayers=[2],active_fnct=['tanh','linear']):
     return(deltas)
 
 def update(x,z,w,b,deltas,eta=0.005,hlayers=[2]):
-    cdef list new_w = []
-    cdef list new_b = []
-    cdef int j = len(hlayers)
-    cdef size_t i
+    new_w = []
+    new_b = []
+    j = len(hlayers)
     for i in range(0,len(hlayers)+1):
         if i == 0:
             gw = np.dot(deltas[j],x)

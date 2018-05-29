@@ -1,7 +1,8 @@
-from distutils.core import setup
-from Cython.Build import cythonize
+from distutils.core import setup, Extension
 
-setup(
-  name = 'PyNeuralNets',
-  ext_modules = cythonize(["auxiliary.pyx", 'NN.pyx']),
-)
+neuron_module = Extension('neuron', sources = ['neuron.c'])
+
+setup(name='neuron',
+      version='0.1.0',
+      description='Neural Networks for Python in C',
+      ext_modules=[neuron_module])
